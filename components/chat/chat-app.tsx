@@ -14,7 +14,7 @@ type ChatMessage = {
   }>;
 };
 
-export function ChatApp() {
+export function ChatApp({ initialTopic }: { initialTopic?: string }) {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [provider, setProvider] = useState<string | null>(null);
@@ -82,7 +82,9 @@ export function ChatApp() {
         <div className="mt-5 rounded-2xl bg-tint-warm p-4 text-sm leading-6 text-text">
           {provider
             ? `Embedding provider path: ${provider}. If API keys are missing, retrieval still works with RootED's local fallback.`
-            : "Ask a question like: 'मुझे scholarship के लिए कहाँ apply करना है?' or 'I need to return to school after dropping out.'"}
+            : initialTopic
+              ? `Deep link topic loaded: ${initialTopic}. Ask a follow-up question to keep exploring that resource.`
+              : "Ask a question like: 'मुझे scholarship के लिए कहाँ apply करना है?' or 'I need to return to school after dropping out.'"}
         </div>
       </section>
 
@@ -145,4 +147,3 @@ export function ChatApp() {
     </div>
   );
 }
-

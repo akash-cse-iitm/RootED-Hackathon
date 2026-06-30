@@ -1,12 +1,22 @@
-import { ModulePlaceholder } from "@/components/module-placeholder";
+import { redirect } from "next/navigation";
 
-export default function ReelsPage() {
+import { ReelsFeed } from "@/components/reels/reels-feed";
+import { Shell } from "@/components/shell";
+import { getCurrentUser } from "@/lib/auth";
+import { listReels } from "@/lib/reels/store";
+
+export default async function ReelsPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const reels = await listReels();
+
   return (
-    <ModulePlaceholder
-      title="Reels Feed"
-      eyebrow="P4 next"
-      description="Phase 4 adds the vertical feed, quiz cards, scholarship alerts, and sharing."
-    />
+    <Shell className="pb-16 pt-6">
+      <ReelsFeed reels={reels} />
+    </Shell>
   );
 }
-
