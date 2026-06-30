@@ -58,7 +58,7 @@ const ROLE_META: Record<AppRole, { label: string; icon: typeof UserRound; taglin
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/");
 
   const roleModules = getModulesForRole(user.role);
   const meta = ROLE_META[user.role];

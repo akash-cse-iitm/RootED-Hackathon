@@ -14,7 +14,7 @@ export async function getCurrentUser() {
 /** Require authentication + optional role access for a module id. Redirects on failure. */
 export async function requireAuth(moduleId?: string) {
   const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/");
   if (moduleId && !ROLE_MODULES[user.role].includes(moduleId)) {
     redirect("/dashboard");
   }

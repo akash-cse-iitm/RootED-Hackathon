@@ -6,6 +6,26 @@ const hindiHumanTerms = ["इंसान", "मानव", "किसी से
 const teluguScholarshipTerms = ["స్కాలర్‌షిప్", "విద్యార్థి వేతనం"];
 const teluguHumanTerms = ["మనిషి", "ఫిర్యాదు", "సహాయం కావాలి"];
 
+// Hinglish (romanized Hindi) term lists
+const hinglishHumanTerms = ["insaan chahiye", "kisi se baat", "help chahiye", "madad chahiye", "shikayat", "problem hai"];
+const hinglishScholarshipTerms = ["scholarship chahiye", "scholarship kaise", "virasat", "chaatravrutti", "fees mafi", "fee maafi"];
+const hinglishSchemeTerms = ["sarkari yojana", "school wapas", "padhai chhod", "dropout", "bhojan", "midday meal"];
+
+// Markers that identify Hinglish (Roman-script Hindi) — 2+ matches = Hinglish
+const HINGLISH_MARKERS = [
+  "mujhe", "chahiye", "kaise", "saktha", "sakti", "sakte", "milega", "milegi",
+  "karoon", "karo", "batao", "seekhna", "sikhna", "sikho", "padhai", "naukri",
+  "yaar", "bhai", "didi", "agar", "lekin", "aur ", "wala", "wali",
+  "hain ", "hai ", "mein ", "liye", "kuch", "kya "
+];
+
+export function detectHinglish(query: string): boolean {
+  if (/[ऀ-ॿఀ-౿]/u.test(query)) return false;
+  const q = query.toLowerCase();
+  const matches = HINGLISH_MARKERS.filter((m) => q.includes(m)).length;
+  return matches >= 2;
+}
+
 export type SupportedLocale = "en" | "hi" | "te";
 export type ChatIntent = "scholarship" | "scheme" | "resource" | "grievance" | "human" | "unknown";
 
@@ -44,7 +64,8 @@ export function detectIntent(query: string): ChatIntent {
     normalized.includes("complaint") ||
     normalized.includes("grievance") ||
     hindiHumanTerms.some((term) => query.includes(term)) ||
-    teluguHumanTerms.some((term) => query.includes(term))
+    teluguHumanTerms.some((term) => query.includes(term)) ||
+    hinglishHumanTerms.some((term) => normalized.includes(term))
   ) {
     return normalized.includes("human") || normalized.includes("agent")
       ? "human"
@@ -56,7 +77,8 @@ export function detectIntent(query: string): ChatIntent {
     normalized.includes("fee") ||
     normalized.includes("stipend") ||
     hindiScholarshipTerms.some((term) => query.includes(term)) ||
-    teluguScholarshipTerms.some((term) => query.includes(term))
+    teluguScholarshipTerms.some((term) => query.includes(term)) ||
+    hinglishScholarshipTerms.some((term) => normalized.includes(term))
   ) {
     return "scholarship";
   }
@@ -65,7 +87,8 @@ export function detectIntent(query: string): ChatIntent {
     normalized.includes("scheme") ||
     normalized.includes("meal") ||
     normalized.includes("dropout") ||
-    normalized.includes("return to school")
+    normalized.includes("return to school") ||
+    hinglishSchemeTerms.some((term) => normalized.includes(term))
   ) {
     return "scheme";
   }
@@ -75,7 +98,13 @@ export function detectIntent(query: string): ChatIntent {
     normalized.includes("study") ||
     normalized.includes("resource") ||
     normalized.includes("career") ||
-    normalized.includes("skill")
+    normalized.includes("skill") ||
+    // Hinglish resource terms
+    normalized.includes("seekhna") ||
+    normalized.includes("sikho") ||
+    normalized.includes("kaise") ||
+    normalized.includes("naukri") ||
+    normalized.includes("padhai")
   ) {
     return "resource";
   }

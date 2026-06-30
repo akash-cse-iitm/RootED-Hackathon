@@ -7,7 +7,7 @@ import { getPassport } from "@/lib/earn/store";
 export default async function PassportPage() {
   const user = await getCurrentUser();
   if (!user) {
-    redirect("/login");
+    redirect("/");
   }
 
   const passport = await getPassport(user.id);

@@ -5,7 +5,7 @@ import { answerGrounded, detectLangAndIntent } from "@/lib/ai";
 import { getCurrentUser } from "@/lib/auth";
 import { createGrievance } from "@/lib/grievances/store";
 import { loadKnowledgeBase } from "@/lib/rag/ingest";
-import { retrieveKnowledge } from "@/lib/rag/retrieve";
+import { retrieveKnowledge, detectHinglish } from "@/lib/rag/retrieve";
 import { generalKnowledgeAnswer } from "@/lib/rag/general-knowledge";
 
 const requestSchema = z.object({
@@ -25,12 +25,13 @@ export async function POST(request: Request) {
   const user = await getCurrentUser();
   const { message } = parsed.data;
   const { language, intent } = await detectLangAndIntent(message);
+  const isHinglish = detectHinglish(message);
 
   // Step 1: Check general knowledge FIRST for skill/career/tech topics not in KB.
   // This runs before KB retrieval so off-KB topics always get a relevant answer.
   const isHumanRequest = intent === "human" || intent === "grievance";
   if (!isHumanRequest) {
-    const gkAnswer = generalKnowledgeAnswer(message, language);
+    const gkAnswer = generalKnowledgeAnswer(message, language, isHinglish);
     if (gkAnswer) {
       return NextResponse.json({
         answer: gkAnswer,

@@ -12,7 +12,7 @@ export default async function VetTranscriptPage({
 }) {
   const user = await getCurrentUser();
   if (!user) {
-    redirect("/login");
+    redirect("/");
   }
 
   const bundle = await getLectureBundle(params.id);
