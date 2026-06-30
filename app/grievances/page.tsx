@@ -15,7 +15,7 @@ export default async function GrievancesPage() {
           Claim and resolve escalated learner grievances
         </h1>
         <p className="mt-3 text-sm leading-7 text-muted">
-          Learner messages that couldn't be answered by the chatbot, or requests
+          Learner messages that could not be answered by the chatbot, or requests
           for human support, appear here. Claim a grievance to own it, then
           resolve it with a response.
         </p>
