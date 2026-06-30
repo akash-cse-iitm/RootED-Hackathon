@@ -1,0 +1,149 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgvector]
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String
+  phone        String?
+  locale       String        @default("en")
+  role         String        @default("learner")
+  transcripts  Transcript[]  @relation("author")
+  vetted       Transcript[]  @relation("vetter")
+  skillRecords SkillRecord[]
+  payouts      PayoutLedger[]
+  attempts     QuizAttempt[]
+  grievances   Grievance[]
+}
+
+model Concept {
+  id        String     @id @default(cuid())
+  name      String
+  subject   String
+  level     Int
+  prereqs   Prereq[]   @relation("to")
+  unlocks   Prereq[]   @relation("from")
+  questions Question[]
+}
+
+model Prereq {
+  id     String  @id @default(cuid())
+  fromId String
+  toId   String
+  from   Concept @relation("from", fields: [fromId], references: [id])
+  to     Concept @relation("to", fields: [toId], references: [id])
+}
+
+model Question {
+  id          String  @id @default(cuid())
+  conceptId   String
+  stem        String
+  options     String[]
+  answerIndex Int
+  difficulty  Int     @default(1)
+  concept     Concept @relation(fields: [conceptId], references: [id])
+}
+
+model QuizAttempt {
+  id             String   @id @default(cuid())
+  userId         String
+  mode           String
+  createdAt      DateTime @default(now())
+  responses      Json
+  scoreByConcept Json
+  rootGaps       String[]
+  user           User     @relation(fields: [userId], references: [id])
+}
+
+model Roadmap {
+  id        String   @id @default(cuid())
+  userId    String
+  attemptId String
+  steps     Json
+  createdAt DateTime @default(now())
+}
+
+model Lecture {
+  id         String       @id @default(cuid())
+  title      String
+  sourceUrl  String
+  type       String
+  sourceLang String
+  transcripts Transcript[]
+}
+
+model Transcript {
+  id        String   @id @default(cuid())
+  lectureId String
+  language  String
+  segments  Json
+  status    String   @default("draft")
+  authorId  String?
+  vetterId  String?
+  lecture   Lecture  @relation(fields: [lectureId], references: [id])
+  author    User?    @relation("author", fields: [authorId], references: [id])
+  vetter    User?    @relation("vetter", fields: [vetterId], references: [id])
+}
+
+model SkillRecord {
+  id         String   @id @default(cuid())
+  userId     String
+  label      String
+  evidenceUrl String?
+  verifiedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model PayoutLedger {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  reason    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model KnowledgeDoc {
+  id        String     @id @default(cuid())
+  title     String
+  category  String
+  language  String
+  sourceUrl String?
+  body      String
+  chunks    DocChunk[]
+}
+
+model DocChunk {
+  id        String                       @id @default(cuid())
+  docId     String
+  text      String
+  embedding Unsupported("vector(1536)")?
+  doc       KnowledgeDoc                 @relation(fields: [docId], references: [id])
+}
+
+model Grievance {
+  id        String   @id @default(cuid())
+  userId    String?
+  text      String
+  language  String
+  status    String   @default("open")
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model Reel {
+  id         String @id @default(cuid())
+  type       String
+  title      String
+  body       String
+  conceptId  String?
+  questionId String?
+  docId      String?
+}
