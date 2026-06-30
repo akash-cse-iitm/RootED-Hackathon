@@ -1,0 +1,43 @@
+{
+  "id": "lecture-academic-fractions",
+  "title": "Fractions Refresher: Part of a Whole",
+  "sourceUrl": "https://example.org/lectures/fractions-refresher",
+  "type": "academic",
+  "sourceLang": "en",
+  "reviewLanguage": "te",
+  "englishSegments": [
+    {
+      "start": 0,
+      "end": 18,
+      "text": "A fraction shows how many equal parts of a whole we are looking at."
+    },
+    {
+      "start": 18,
+      "end": 36,
+      "text": "If a pizza is cut into four equal parts and you take one, you have one fourth."
+    },
+    {
+      "start": 36,
+      "end": 55,
+      "text": "To compare fractions, first check whether the parts are the same size."
+    }
+  ],
+  "draftSegments": [
+    {
+      "start": 0,
+      "end": 18,
+      "text": "భిన్నం అంటే ఒక మొత్తం లోని సమాన భాగాలలో ఎన్ని భాగాలు తీసుకున్నామో చూపుతుంది."
+    },
+    {
+      "start": 18,
+      "end": 36,
+      "text": "ఒక పిజ్జాను నాలుగు సమాన భాగాలుగా కోస్తే, ఒక భాగం తీసుకుంటే అది ఒక-నాలుగవ వంతు."
+    },
+    {
+      "start": 36,
+      "end": 55,
+      "text": "భిన్నాలను పోల్చేటప్పుడు ముందు భాగాల పరిమాణం ఒకటేనా అని చూడాలి."
+    }
+  ]
+}
+

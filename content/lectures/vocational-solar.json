@@ -1,0 +1,43 @@
+{
+  "id": "lecture-vocational-solar",
+  "title": "Vocational Basics: Safe Solar Lamp Wiring",
+  "sourceUrl": "https://example.org/lectures/safe-solar-lamp-wiring",
+  "type": "vocational",
+  "sourceLang": "en",
+  "reviewLanguage": "te",
+  "englishSegments": [
+    {
+      "start": 0,
+      "end": 16,
+      "text": "Before wiring a solar lamp, check that the battery is disconnected and the tools are dry."
+    },
+    {
+      "start": 16,
+      "end": 34,
+      "text": "Match the positive wire to the marked positive terminal and tighten the connector gently."
+    },
+    {
+      "start": 34,
+      "end": 54,
+      "text": "After the final connection, test the lamp in sunlight and note any loose joint for rework."
+    }
+  ],
+  "draftSegments": [
+    {
+      "start": 0,
+      "end": 16,
+      "text": "సోలార్ ల్యాంప్ వైర్లింగ్ మొదలుపెట్టే ముందు బ్యాటరీ డిస్కనెక్ట్ అయ్యిందో, పరికరాలు పొడిగా ఉన్నాయో చూడండి."
+    },
+    {
+      "start": 16,
+      "end": 34,
+      "text": "పాజిటివ్ వైర్‌ను గుర్తు చేసిన పాజిటివ్ టెర్మినల్‌కు కలిపి కనెక్టర్‌ను నెమ్మదిగా బిగించండి."
+    },
+    {
+      "start": 34,
+      "end": 54,
+      "text": "చివరి కనెక్షన్ తర్వాత ల్యాంప్‌ను వెలుతురులో పరీక్షించి, సడిలైన జాయింట్ ఉంటే మళ్లీ బిగించండి."
+    }
+  ]
+}
+
