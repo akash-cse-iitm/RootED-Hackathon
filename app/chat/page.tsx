@@ -1,12 +1,19 @@
-import { ModulePlaceholder } from "@/components/module-placeholder";
+import { redirect } from "next/navigation";
 
-export default function ChatPage() {
+import { ChatApp } from "@/components/chat/chat-app";
+import { Shell } from "@/components/shell";
+import { getCurrentUser } from "@/lib/auth";
+
+export default async function ChatPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   return (
-    <ModulePlaceholder
-      title="RAG Help Chatbot"
-      eyebrow="P2 next"
-      description="This route is reserved for grounded multilingual scholarship help and grievance escalation."
-    />
+    <Shell className="pb-16 pt-6">
+      <ChatApp />
+    </Shell>
   );
 }
-

@@ -8,4 +8,4 @@ coverage
 *.log
 generated
 tsconfig.tsbuildinfo
-
+data/
