@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Award, BookOpen, Languages, PlaySquare, ShieldCheck } from "lucide-react";
 
+import { DashboardProgressWidget } from "@/components/dashboard-progress-widget";
 import { LogoutButton } from "@/components/logout-button";
 import { Shell } from "@/components/shell";
 import { Badge } from "@/components/ui/badge";
@@ -128,6 +129,8 @@ export default async function DashboardPage() {
           </Link>
         ))}
       </section>
+
+      <DashboardProgressWidget userId={user.id} />
     </Shell>
   );
 }
