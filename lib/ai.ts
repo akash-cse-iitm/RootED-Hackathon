@@ -140,25 +140,71 @@ function localGroundedAnswer({
   if (contexts.length === 0) {
     if (escalated) {
       if (lang === "hi") {
-        return "यह सवाल मेरी मौजूदा नॉलेज बेस से हल नहीं हो सका, इसलिए मैंने इसे इंसानी सहायता के लिए grievance queue में भेज दिया है।";
+        return [
+          "🙏 आपकी शिकायत/सवाल हमारे NGO सहयोगी दल को भेज दी गई है।",
+          "",
+          "मेरे पास इस विषय पर अभी पर्याप्त जानकारी नहीं है, लेकिन एक वास्तविक व्यक्ति जल्द ही आपकी मदद करेगा।",
+          "",
+          "आप इस बीच निम्न कोशिश कर सकते हैं:",
+          "• scholarships.gov.in – सरकारी छात्रवृत्ति पोर्टल",
+          "• 1098 – बाल हेल्पलाइन (चाइल्डलाइन)",
+          "• अपने स्कूल प्राचार्य या स्थानीय NGO से सम्पर्क करें।"
+        ].join("\n");
       }
 
       if (lang === "te") {
-        return "ఈ ప్రశ్నను ప్రస్తుత జ్ఞాన ఆధారంతో పరిష్కరించలేకపోయాను, అందుకే మానవ సహాయం కోసం grievance queue కి పంపించాను.";
+        return [
+          "🙏 మీ ఫిర్యాదు/ప్రశ్న మా NGO సహాయక బృందానికి పంపించబడింది.",
+          "",
+          "ప్రస్తుతం నా వద్ద ఈ విషయంలో సరిపోయే సమాచారం లేదు, కానీ ఒక నిజమైన వ్యక్తి త్వరలో సహాయం చేస్తారు.",
+          "",
+          "అంతవరకు మీరు ప్రయత్నించగలరు:",
+          "• scholarships.gov.in – జాతీయ స్కాలర్‌షిప్ పోర్టల్",
+          "• 1098 – చైల్డ్‌లైన్ హెల్ప్‌లైన్",
+          "• మీ పాఠశాల ప్రధానాధ్యాపకుడిని లేదా స్థానిక NGOని సంప్రదించండి."
+        ].join("\n");
       }
 
-      return "I could not resolve this from the current knowledge base, so I have sent it to the human grievance queue.";
+      return [
+        "🙏 Your question has been sent to the NGO support queue and a human will follow up.",
+        "",
+        "I could not find a strong match in the current knowledge base. While you wait, you may try:",
+        "• scholarships.gov.in — National Scholarship Portal",
+        "• Childline 1098 — free helpline for children",
+        "• Your school principal or local education NGO."
+      ].join("\n");
     }
 
     if (lang === "hi") {
-      return "मुझे अभी अपने नॉलेज बेस में इसका भरोसेमंद जवाब नहीं मिला। मैं इसे इंसानी सहायता के लिए आगे भेज सकता हूँ।";
+      return [
+        "मुझे इस विशेष सवाल का भरोसेमंद जवाब अभी नहीं मिला।",
+        "",
+        "आप यह कोशिश कर सकते हैं:",
+        "• 'मुझे इंसान से बात करनी है' — टाइप करें और हम आपको NGO queue में भेज देंगे।",
+        "• scholarships.gov.in पर सीधे खोजें।",
+        "• DIKSHA, SWAYAM, या e-Pathshala पर पढ़ाई के संसाधन देखें।"
+      ].join("\n");
     }
 
     if (lang === "te") {
-      return "నా పరిజ్ఞాన ఆధారంలో దీనికి నమ్మకమైన సమాధానం దొరకలేదు. నేను దీన్ని మానవ సహాయం కోసం ఎస్కలేట్ చేయగలను.";
+      return [
+        "ఈ ప్రశ్నకు నా వద్ద ఖచ్చితమైన సమాచారం లేదు.",
+        "",
+        "మీరు ప్రయత్నించగలరు:",
+        "• 'నాకు మానవ సహాయం కావాలి' అని టైప్ చేయండి — మేము NGO queue కి పంపిస్తాం.",
+        "• scholarships.gov.in లో నేరుగా వెతకండి.",
+        "• DIKSHA లేదా SWAYAM లో అభ్యాస వనరులు చూడండి."
+      ].join("\n");
     }
 
-    return "I could not find a reliable answer for that in the current knowledge base. I can escalate it to a human queue.";
+    return [
+      "I could not find a reliable answer for that in the current knowledge base.",
+      "",
+      "You can try:",
+      "• Type 'I want to speak to a human' — I will escalate to the NGO queue.",
+      "• Search directly on scholarships.gov.in.",
+      "• Browse learning resources on DIKSHA, SWAYAM, or e-Pathshala."
+    ].join("\n");
   }
 
   const selected = contexts
@@ -166,35 +212,50 @@ function localGroundedAnswer({
       (context, index, list) =>
         list.findIndex((entry) => entry.docId === context.docId) === index
     )
-    .slice(0, 2);
-  const lines = selected.map((context) => `- ${summarizeContext(context, lang)}`);
+    .slice(0, 3);
 
   if (lang === "hi") {
+    const lines = selected.map(
+      (ctx) => `• ${ctx.docTitle}: ${summarizeContext(ctx, lang)}`
+    );
     return [
-      "मुझे इन आधिकारिक स्रोतों से यह मदद मिली:",
+      "✅ मुझे आपके सवाल का जवाब मिला। नीचे जानकारी देखें:",
+      "",
       ...lines,
+      "",
       escalated
-        ? "यह मुद्दा इंसानी सहायता के लिए भी भेज दिया गया है।"
-        : "नीचे दिए गए आधिकारिक लिंक से आवेदन या अगला कदम जरूर जाँचें।"
+        ? "⚠️ यह मुद्दा इंसानी सहायता के लिए भी भेज दिया गया है।"
+        : "👉 ऊपर दिए गए नाम पर क्लिक करके आधिकारिक लिंक पर जाएं और आवेदन करें।"
     ].join("\n");
   }
 
   if (lang === "te") {
+    const lines = selected.map(
+      (ctx) => `• ${ctx.docTitle}: ${summarizeContext(ctx, lang)}`
+    );
     return [
-      "ఈ అధికారిక వనరుల నుంచి నాకు ఇది దొరికింది:",
+      "✅ మీ ప్రశ్నకు సమాధానం దొరికింది. దయచేసి చదవండి:",
+      "",
       ...lines,
+      "",
       escalated
-        ? "ఈ అంశాన్ని మానవ సహాయానికి కూడా పంపించాం."
-        : "క్రింద ఉన్న అధికారిక లింక్‌లలో తదుపరి దశలను పరిశీలించండి."
+        ? "⚠️ ఈ అంశాన్ని మానవ సహాయానికి కూడా పంపించాం."
+        : "👉 పై పేర్లపై క్లిక్ చేసి అధికారిక లింక్‌లో దరఖాస్తు చేయండి."
     ].join("\n");
   }
 
+  const lines = selected.map(
+    (ctx) =>
+      `• ${ctx.docTitle} (${ctx.docCategory}): ${summarizeContext(ctx, lang)}`
+  );
   return [
-    "Here is what I found from the official sources in RootED's knowledge base:",
+    "✅ Here is what I found from official sources in the RootED knowledge base:",
+    "",
     ...lines,
+    "",
     escalated
-      ? "I have also sent this issue to the human support queue."
-      : "Please use the official links below to confirm the next step."
+      ? "⚠️ I have also escalated this to the human support queue since you may need more help."
+      : "👉 Click the official links below to verify eligibility and apply. Always use official government URLs."
   ].join("\n");
 }
 

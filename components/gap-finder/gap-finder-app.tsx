@@ -42,8 +42,19 @@ function loadProgress(userId: string) {
     return defaultProgress;
   }
 
-  const raw = window.localStorage.getItem(storageKey(userId));
-  return raw ? (JSON.parse(raw) as ProgressState) : defaultProgress;
+  try {
+    const raw = window.localStorage.getItem(storageKey(userId));
+    if (raw) {
+      const parsed = JSON.parse(raw) as ProgressState;
+      // Validate that all fields are arrays
+      if (Array.isArray(parsed.badges) && Array.isArray(parsed.completedStepIds)) {
+        return parsed;
+      }
+    }
+    return defaultProgress;
+  } catch {
+    return defaultProgress;
+  }
 }
 
 function saveProgress(userId: string, progress: ProgressState) {
@@ -176,7 +187,7 @@ export function GapFinderApp({
           </p>
           {initialFocus && conceptMap[initialFocus] ? (
             <div className="mt-4 rounded-2xl bg-tint-warm p-4 text-sm leading-6 text-text">
-              Deep link focus: <strong>{conceptMap[initialFocus].name}</strong>.
+              Deep link focus: <strong>{conceptMap[initialFocus]?.name ?? initialFocus}</strong>.
               This reel sent the learner here to rebuild the path into that
               concept.
             </div>
@@ -255,7 +266,7 @@ export function GapFinderApp({
             </h1>
           </div>
           <div className="rounded-full bg-tint px-4 py-2 text-sm text-teal-dark">
-            Probing {conceptMap[currentQuestion.conceptId].name}
+            Probing {currentQuestion.conceptId && conceptMap[currentQuestion.conceptId] ? conceptMap[currentQuestion.conceptId].name : "unknown concept"}
           </div>
         </div>
 
@@ -308,12 +319,21 @@ export function GapFinderApp({
           Building roadmap
         </p>
         <h1 className="mt-3 font-heading text-3xl text-ink">
-          Finding the earliest break in the chain
+          Finding the earliest break in the chain…
         </h1>
         <p className="mt-3 text-sm leading-7 text-muted">
-          RootED is scoring each concept, checking prerequisites in topological
-          order, and generating the first catch-up steps now.
+          Scoring each concept, checking prerequisites in topological order,
+          and loading the first catch-up micro-lessons for your root gap.
         </p>
+        <div className="mt-6 flex gap-2">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-2 w-2 animate-bounce rounded-full bg-teal"
+              style={{ animationDelay: `${i * 150}ms` }}
+            />
+          ))}
+        </div>
       </section>
     );
   }
@@ -340,17 +360,13 @@ export function GapFinderApp({
               key={conceptId}
               className="rounded-full bg-tint px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-teal-dark"
             >
-              {conceptMap[conceptId].name}
+              {conceptId && conceptMap[conceptId] ? conceptMap[conceptId].name : "unknown"}
               {index < firstRoadmap.pathToTarget.length - 1 ? " →" : ""}
             </span>
           ))}
         </div>
         <div className="mt-5 rounded-2xl bg-tint-warm p-4 text-sm leading-6 text-text">
-          {result.aiConfigured ? (
-            "Claude is configured, so these step descriptions were refreshed through the AI pathway."
-          ) : (
-            "AI is not configured right now, so RootED used its seeded bridge-learning micro-lessons instead of crashing."
-          )}
+          Each step below is a full micro-lesson — explanation, worked example, and practice questions — tailored to this concept and your mode ({mode === "returnee" ? "returnee bridge" : "current learner"}).
         </div>
       </section>
 
@@ -376,7 +392,9 @@ export function GapFinderApp({
               Badge
             </div>
             <p className="mt-2 text-sm leading-6 text-white/80">
-              {progress.badges.join(" · ") || "Finish a step to unlock a badge."}
+              {Array.isArray(progress.badges) && progress.badges.length > 0
+                ? progress.badges.join(" · ")
+                : "Finish a step to unlock a badge."}
             </p>
           </div>
         </div>

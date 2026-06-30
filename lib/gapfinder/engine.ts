@@ -6,6 +6,7 @@ import {
   seededResources,
   TARGET_CONCEPT_ID
 } from "@/lib/gapfinder/graph";
+import { getSeedLessonsForConcept } from "@/lib/gapfinder/seed-lessons";
 import type {
   ConceptScore,
   DiagnosticSession,
@@ -158,7 +159,8 @@ export function computeRootGaps(scores: ConceptScore[]) {
     .filter((concept) =>
       concept.prereqIds.every((prereqId) => scoreMap[prereqId]?.mastered === true)
     )
-    .map((concept) => concept.id);
+    .map((concept) => concept.id)
+    .filter((id) => id && conceptMap[id]);
 }
 
 function dfsPath(currentId: string, targetId: string, visited = new Set<string>()): string[] | null {
@@ -191,6 +193,21 @@ export function buildPathToTarget(rootGapId: string) {
 
 function fallbackRoadmapSteps(rootGapId: string, mode: GapFinderMode): RoadmapStep[] {
   const concept = conceptMap[rootGapId];
+  if (!concept) {
+    return [];
+  }
+
+  // Use rich pre-generated concept-specific lessons when available
+  const seedSteps = getSeedLessonsForConcept(rootGapId, mode);
+  if (seedSteps.length > 0) {
+    const steps = seedSteps.map((step) => ({
+      ...step,
+      resourceLabel: seededResources[rootGapId] ?? step.resourceLabel
+    }));
+    return steps;
+  }
+
+  // Generic fallback for any concept not in seed-lessons
   const base: RoadmapStep[] = [
     {
       id: `${rootGapId}-refresh`,
@@ -201,7 +218,7 @@ function fallbackRoadmapSteps(rootGapId: string, mode: GapFinderMode): RoadmapSt
         `Explain ${concept.name.toLowerCase()} in your own words.`,
         `Solve one easy problem for ${concept.name.toLowerCase()}.`
       ],
-      resourceLabel: seededResources[rootGapId]
+      resourceLabel: seededResources[rootGapId] ?? undefined
     },
     {
       id: `${rootGapId}-worked`,
@@ -265,7 +282,7 @@ export function buildGapFinderResult(
   const rootGaps = computeRootGaps(scores);
   const roadmaps = rootGaps.map((rootGapId) => ({
     rootGapId,
-    rootGapName: conceptMap[rootGapId].name,
+    rootGapName: conceptMap[rootGapId]?.name ?? rootGapId,
     pathToTarget: buildPathToTarget(rootGapId),
     steps: fallbackRoadmapSteps(rootGapId, mode)
   }));
@@ -274,7 +291,7 @@ export function buildGapFinderResult(
     const fallbackRoot = mode === "returnee" ? "fractions" : "two-step-equations";
     roadmaps.push({
       rootGapId: fallbackRoot,
-      rootGapName: conceptMap[fallbackRoot].name,
+      rootGapName: conceptMap[fallbackRoot]?.name ?? fallbackRoot,
       pathToTarget: buildPathToTarget(fallbackRoot),
       steps: fallbackRoadmapSteps(fallbackRoot, mode)
     });

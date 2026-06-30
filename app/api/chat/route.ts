@@ -6,10 +6,13 @@ import { getCurrentUser } from "@/lib/auth";
 import { createGrievance } from "@/lib/grievances/store";
 import { loadKnowledgeBase } from "@/lib/rag/ingest";
 import { retrieveKnowledge } from "@/lib/rag/retrieve";
+import { generalKnowledgeAnswer } from "@/lib/rag/general-knowledge";
 
 const requestSchema = z.object({
   message: z.string().min(2)
 });
+
+const RELEVANCE_THRESHOLD = 0.45;
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -22,25 +25,43 @@ export async function POST(request: Request) {
   const user = await getCurrentUser();
   const { message } = parsed.data;
   const { language, intent } = await detectLangAndIntent(message);
+
+  // Step 1: Check general knowledge FIRST for skill/career/tech topics not in KB.
+  // This runs before KB retrieval so off-KB topics always get a relevant answer.
+  const isHumanRequest = intent === "human" || intent === "grievance";
+  if (!isHumanRequest) {
+    const gkAnswer = generalKnowledgeAnswer(message, language);
+    if (gkAnswer) {
+      return NextResponse.json({
+        answer: gkAnswer,
+        language,
+        intent,
+        escalated: false,
+        grievance: null,
+        citations: [],
+        source: "general-knowledge"
+      });
+    }
+  }
+
+  // Step 2: KB retrieval for scholarship / scheme / resource / helpline queries
   const kb = await loadKnowledgeBase();
   const retrieved = await retrieveKnowledge(message, intent, 5);
   const topScore = retrieved[0]?.score ?? 0;
-  const shouldEscalate =
-    intent === "human" || intent === "grievance" || topScore < 0.35;
-  const contexts =
-    intent === "human" || intent === "grievance"
-      ? []
-      : retrieved.filter(
-          (context, index, list) =>
-            list.findIndex((entry) => entry.docId === context.docId) === index
-        );
+  const isBelowThreshold = topScore < RELEVANCE_THRESHOLD;
+
+  const shouldEscalate = isHumanRequest || isBelowThreshold;
+
+  // Only surface KB docs when they're actually relevant AND the user didn't ask for a human
+  const contexts = isHumanRequest || isBelowThreshold
+    ? []
+    : retrieved.filter(
+        (ctx, index, list) =>
+          list.findIndex((entry) => entry.docId === ctx.docId) === index
+      );
 
   const grievance = shouldEscalate
-    ? await createGrievance({
-        text: message,
-        language,
-        userId: user?.id
-      })
+    ? await createGrievance({ text: message, language, userId: user?.id })
     : null;
 
   const answer = await answerGrounded({
@@ -56,11 +77,11 @@ export async function POST(request: Request) {
     intent,
     escalated: Boolean(grievance),
     grievance,
-    citations: contexts.slice(0, 3).map((context) => ({
-      title: context.docTitle,
-      sourceUrl: context.sourceUrl,
-      category: context.docCategory,
-      score: context.score
+    citations: contexts.slice(0, 3).map((ctx) => ({
+      title: ctx.docTitle,
+      sourceUrl: ctx.sourceUrl,
+      category: ctx.docCategory,
+      score: ctx.score
     })),
     provider: kb.provider
   });

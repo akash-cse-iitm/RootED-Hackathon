@@ -12,6 +12,18 @@ export type StoredTranscript = {
   vetterId?: string;
 };
 
+export type UploadedLecture = {
+  id: string;
+  title: string;
+  type: "academic" | "vocational";
+  sourceLang: string;
+  reviewLanguage: string;
+  sourceUrl: string;
+  englishSegments: Array<{ start: number; end: number; text: string }>;
+  draftSegments: Array<{ start: number; end: number; text: string }>;
+  uploadedAt: string;
+};
+
 export type SkillRecord = {
   id: string;
   userId: string;
@@ -29,6 +41,7 @@ export type PayoutLedger = {
 
 type EarnState = {
   transcripts: StoredTranscript[];
+  uploadedLectures: UploadedLecture[];
   skillRecords: SkillRecord[];
   payouts: PayoutLedger[];
 };
@@ -52,6 +65,7 @@ async function ensureState() {
         segments: lecture.draftSegments,
         status: "draft"
       })),
+      uploadedLectures: [],
       skillRecords: [],
       payouts: []
     };
@@ -193,5 +207,36 @@ export async function getPassport(userId: string) {
     skills: state.skillRecords.filter((record) => record.userId === userId),
     payouts: state.payouts.filter((payout) => payout.userId === userId)
   };
+}
+
+export async function addUploadedLecture(
+  input: Omit<UploadedLecture, "uploadedAt">
+): Promise<UploadedLecture> {
+  return withMutation(async () => {
+    const state = await readState();
+    if (!state.uploadedLectures) state.uploadedLectures = [];
+
+    const lecture: UploadedLecture = {
+      ...input,
+      uploadedAt: new Date().toISOString()
+    };
+    state.uploadedLectures.push(lecture);
+
+    // Also add a draft transcript so the review queue picks it up
+    state.transcripts.push({
+      lectureId: lecture.id,
+      language: lecture.reviewLanguage,
+      segments: lecture.draftSegments,
+      status: "draft"
+    });
+
+    await writeState(state);
+    return lecture;
+  });
+}
+
+export async function listUploadedLectures(): Promise<UploadedLecture[]> {
+  const state = await readState();
+  return state.uploadedLectures ?? [];
 }
 

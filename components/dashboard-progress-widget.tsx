@@ -26,8 +26,15 @@ export function DashboardProgressWidget({ userId }: { userId: string }) {
       return;
     }
 
-    const parsed = JSON.parse(raw) as ProgressState;
-    setProgress(parsed);
+    try {
+      const parsed = JSON.parse(raw) as ProgressState;
+      // Validate that badges is an array
+      if (Array.isArray(parsed.badges)) {
+        setProgress(parsed);
+      }
+    } catch {
+      // Invalid data, use defaults
+    }
   }, [userId]);
 
   return (

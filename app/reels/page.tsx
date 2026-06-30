@@ -1,16 +1,10 @@
-import { redirect } from "next/navigation";
-
 import { ReelsFeed } from "@/components/reels/reels-feed";
 import { Shell } from "@/components/shell";
-import { getCurrentUser } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { listReels } from "@/lib/reels/store";
 
 export default async function ReelsPage() {
-  const user = await getCurrentUser();
-
-  if (!user) {
-    redirect("/login");
-  }
+  await requireAuth("reels");
 
   const reels = await listReels();
 

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Languages, ShieldCheck, UserRound } from "lucide-react";
 
 import type { SeededUser } from "@/lib/site";
-import { roleThemes } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 
 const roleCopy = {
@@ -30,7 +29,6 @@ export function LoginCard({ user }: { user: SeededUser }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const role = roleCopy[user.role];
-  const theme = roleThemes[user.role];
   const Icon = role.icon;
 
   async function login() {
@@ -53,7 +51,7 @@ export function LoginCard({ user }: { user: SeededUser }) {
   }
 
   return (
-    <div className={`rounded-[1.5rem] border border-line p-5 ${theme.panelClassName}`}>
+    <div className="rounded-[1.5rem] border border-line bg-tint p-5">
       <div className="flex items-start gap-4">
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-teal shadow-sm">
           <Icon className="h-5 w-5" />
@@ -66,9 +64,6 @@ export function LoginCard({ user }: { user: SeededUser }) {
             </p>
           </div>
           <p className="text-sm leading-6 text-muted">{role.text}</p>
-          <p className="text-xs uppercase tracking-[0.16em] text-muted">
-            {theme.summary}
-          </p>
           <Button
             type="button"
             onClick={login}
