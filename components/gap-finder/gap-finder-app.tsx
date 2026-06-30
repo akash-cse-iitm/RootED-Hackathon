@@ -54,7 +54,15 @@ function sameDay(a?: string, b?: string) {
   return Boolean(a && b && a === b);
 }
 
-export function GapFinderApp({ userId }: { userId: string }) {
+export function GapFinderApp({
+  userId,
+  initialMode,
+  initialFocus
+}: {
+  userId: string;
+  initialMode?: GapFinderMode;
+  initialFocus?: string;
+}) {
   const [mode, setMode] = useState<GapFinderMode | null>(null);
   const [session, setSession] = useState<DiagnosticSession | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -69,6 +77,16 @@ export function GapFinderApp({ userId }: { userId: string }) {
       setProgress(loadProgress(userId));
     }
   }, [userId]);
+
+  useEffect(() => {
+    if (initialMode && !session && !result) {
+      setMode(initialMode);
+      setResult(null);
+      setSelectedIndex(null);
+      setSession(createDiagnosticSession(initialMode));
+      setProgress(loadProgress(userId));
+    }
+  }, [initialMode, result, session, userId]);
 
   function begin(selectedMode: GapFinderMode) {
     setMode(selectedMode);
@@ -156,6 +174,13 @@ export function GapFinderApp({ userId }: { userId: string }) {
             RootED walks downward through the math chain until it finds the
             earliest concept that needs repair.
           </p>
+          {initialFocus && conceptMap[initialFocus] ? (
+            <div className="mt-4 rounded-2xl bg-tint-warm p-4 text-sm leading-6 text-text">
+              Deep link focus: <strong>{conceptMap[initialFocus].name}</strong>.
+              This reel sent the learner here to rebuild the path into that
+              concept.
+            </div>
+          ) : null}
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <button
               type="button"
