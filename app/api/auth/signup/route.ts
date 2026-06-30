@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(body);
 
   if (!parsed.success) {
-    const firstError = parsed.error.errors[0]?.message ?? "Invalid signup data.";
+    const firstError = parsed.error.issues[0]?.message ?? "Invalid signup data.";
     return NextResponse.json({ error: firstError }, { status: 400 });
   }
 
