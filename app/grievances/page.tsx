@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { GrievanceQueue } from "@/components/grievances/grievance-queue";
+import { RoleHero } from "@/components/role-hero";
 import { Shell } from "@/components/shell";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -13,6 +14,12 @@ export default async function GrievancesPage() {
 
   return (
     <Shell className="pb-16 pt-6">
+      <RoleHero
+        role={user.role}
+        name={user.name}
+        title="Human grievance queue"
+        body="This role is intentionally different from the learner view: it prioritizes follow-up, resolution, and safe handoff once AI can no longer help."
+      />
       <section className="mb-6 rounded-[2rem] border border-line bg-white p-6 shadow-card">
         <p className="text-sm uppercase tracking-[0.24em] text-teal-dark">
           NGO queue

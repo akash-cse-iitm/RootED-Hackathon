@@ -29,6 +29,16 @@ export default async function LoginPage() {
             </span>
           </p>
         </div>
+        <div className="mt-6 rounded-[1.5rem] bg-ink p-5 text-white">
+          <p className="text-sm uppercase tracking-[0.22em] text-white/65">
+            Distinct role experiences
+          </p>
+          <p className="mt-2 text-sm leading-7 text-white/80">
+            Learner opens on bridge learning, translator opens on verified work,
+            and NGO opens on the human support queue so the UI changes with the
+            person using it.
+          </p>
+        </div>
         <div className="mt-6 grid gap-4">
           {seededUsers.map((userOption) => (
             <LoginCard key={userOption.id} user={userOption} />

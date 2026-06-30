@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { LectureList } from "@/components/earn/lecture-list";
+import { RoleHero } from "@/components/role-hero";
 import { Shell } from "@/components/shell";
 import { getCurrentUser } from "@/lib/auth";
 import { listLectureCards } from "@/lib/earn/store";
@@ -16,6 +17,12 @@ export default async function EarnPage() {
 
   return (
     <Shell className="pb-16 pt-6">
+      <RoleHero
+        role={user.role}
+        name={user.name}
+        title="Learn & Earn workspace"
+        body="This role emphasizes verified language work, vocational evidence, and the passport trail that makes contribution visible."
+      />
       <section className="mb-6 rounded-[2rem] border border-line bg-white p-6 shadow-card">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>

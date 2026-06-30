@@ -7,6 +7,17 @@ export type SeededUser = {
   role: AppRole;
 };
 
+export type RoleTheme = {
+  label: string;
+  eyebrow: string;
+  summary: string;
+  gradient: string;
+  chipClassName: string;
+  panelClassName: string;
+  quickStats: Array<{ label: string; value: string }>;
+  quickLinks: Array<{ label: string; href: string }>;
+};
+
 export type VidyaIconKey =
   | "first-generation"
   | "tongue"
@@ -36,6 +47,66 @@ export const seededUsers: SeededUser[] = [
     role: "ngo"
   }
 ];
+
+export const roleThemes: Record<AppRole, RoleTheme> = {
+  learner: {
+    label: "Learner view",
+    eyebrow: "Stay in school",
+    summary:
+      "See bridge-learning support, scholarship help, and confidence-building next steps first.",
+    gradient:
+      "bg-[linear-gradient(135deg,#0F3D3E_0%,#14746F_55%,#2A9D8F_100%)] text-white",
+    chipClassName: "bg-white/12 text-white border border-white/15",
+    panelClassName: "bg-tint text-teal-dark",
+    quickStats: [
+      { label: "Today’s focus", value: "Root gaps" },
+      { label: "Support mode", value: "Bridge learning" },
+      { label: "Primary path", value: "Gap-Finder" }
+    ],
+    quickLinks: [
+      { label: "Start returnee mode", href: "/gap-finder?mode=returnee" },
+      { label: "Ask in your language", href: "/chat" }
+    ]
+  },
+  translator: {
+    label: "Translator view",
+    eyebrow: "Learn and earn",
+    summary:
+      "Put verified language work first, track published drafts, and turn contribution into a passport entry.",
+    gradient:
+      "bg-[linear-gradient(135deg,#1D3B2A_0%,#2A9D8F_55%,#E9A23B_100%)] text-white",
+    chipClassName: "bg-white/14 text-white border border-white/15",
+    panelClassName: "bg-tint-warm text-ink",
+    quickStats: [
+      { label: "Work type", value: "Local-language review" },
+      { label: "Evidence", value: "Skills passport" },
+      { label: "Primary path", value: "Learn & Earn" }
+    ],
+    quickLinks: [
+      { label: "Open lecture queue", href: "/earn" },
+      { label: "View passport", href: "/earn/passport" }
+    ]
+  },
+  ngo: {
+    label: "NGO view",
+    eyebrow: "Human support queue",
+    summary:
+      "Resolve escalated learner issues fast, keep the queue visible, and route learners back into safe support.",
+    gradient:
+      "bg-[linear-gradient(135deg,#3D201A_0%,#A44A3F_45%,#E76F51_100%)] text-white",
+    chipClassName: "bg-white/12 text-white border border-white/15",
+    panelClassName: "bg-[#fff0ec] text-coral",
+    quickStats: [
+      { label: "Priority", value: "Escalations" },
+      { label: "Queue type", value: "Human follow-up" },
+      { label: "Primary path", value: "Grievances" }
+    ],
+    quickLinks: [
+      { label: "Open grievance queue", href: "/grievances" },
+      { label: "Check support chat", href: "/chat" }
+    ]
+  }
+};
 
 export const modules = [
   {

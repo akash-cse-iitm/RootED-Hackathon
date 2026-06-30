@@ -2,13 +2,16 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Award, BookOpen, Languages, PlaySquare, ShieldCheck } from "lucide-react";
 
+import { AiCapabilityPanel } from "@/components/ai-capability-panel";
 import { DashboardProgressWidget } from "@/components/dashboard-progress-widget";
 import { LogoutButton } from "@/components/logout-button";
+import { RoleHero } from "@/components/role-hero";
 import { Shell } from "@/components/shell";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth";
-import { modules, vidyaItems } from "@/lib/site";
+import { isAiConfigured } from "@/lib/ai";
+import { modules, roleThemes, vidyaItems } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const icons = {
@@ -26,33 +29,33 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  const theme = roleThemes[user.role];
+  const aiConfigured = isAiConfigured();
+
   return (
     <Shell className="pb-16 pt-6">
-      <section className="rounded-[2rem] border border-line bg-white p-6 shadow-card">
+      <RoleHero
+        role={user.role}
+        name={user.name}
+        title={`Welcome back, ${user.name}`}
+        body="RootED keeps the demo focused on the five VIDYA promises: bridge learning, mother-tongue support, dropout prevention, skill verification, and first-generation learner confidence."
+      />
+
+      <section className="mt-6 rounded-[2rem] border border-line bg-white p-6 shadow-card">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-3">
             <Badge className="bg-tint text-teal-dark ring-1 ring-teal/10">
               Dashboard
             </Badge>
-            <div>
-              <h1 className="font-heading text-3xl text-ink">
-                Welcome back, {user.name}
-              </h1>
-              <p className="mt-2 text-sm leading-6 text-muted">
-                RootED keeps the demo focused on the five VIDYA promises:
-                bridge learning, mother-tongue support, dropout prevention,
-                skill verification, and first-generation learner confidence.
-              </p>
-            </div>
+            <p className="text-sm leading-6 text-muted">
+              This dashboard is adapted for the <strong>{theme.label}</strong> flow.
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded-full bg-tint px-4 py-2 text-sm font-medium text-teal-dark">
+            <span className={`rounded-full px-4 py-2 text-sm font-medium ${theme.panelClassName}`}>
               Role: {user.role}
             </span>
-            <Link
-              href="/login"
-              className={buttonVariants({ variant: "outline" })}
-            >
+            <Link href="/login" className={buttonVariants({ variant: "outline" })}>
               Switch user
             </Link>
             <LogoutButton />
@@ -128,6 +131,32 @@ export default async function DashboardPage() {
             </div>
           </Link>
         ))}
+      </section>
+
+      <section className="mt-8">
+        <AiCapabilityPanel
+          configured={aiConfigured}
+          roleLabel={theme.label}
+          bullets={
+            user.role === "learner"
+              ? [
+                  "Claude can generate catch-up roadmap steps when keys are available.",
+                  "The support chatbot can classify language and answer with grounded context.",
+                  "Seeded fallback keeps every learner demo path stable even without keys."
+                ]
+              : user.role === "translator"
+                ? [
+                    "AI is wired for transcription and translation providers behind a flag.",
+                    "The current demo keeps lecture review reliable with seeded drafts.",
+                    "Verified work still turns into a payout trail and skills passport."
+                  ]
+                : [
+                    "AI can escalate unresolved questions into the human queue automatically.",
+                    "Grounded answers are kept separate from human grievance handling.",
+                    "The NGO role is intentionally distinct: humans close the loop."
+                  ]
+          }
+        />
       </section>
 
       <DashboardProgressWidget userId={user.id} />
