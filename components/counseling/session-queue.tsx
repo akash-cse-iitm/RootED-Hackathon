@@ -100,25 +100,29 @@ function SessionCard({ session, onUpdate }: { session: CounselingSession; onUpda
           {/* Action buttons */}
           <div className="flex flex-wrap gap-2">
             {session.status === "pending" && (
-              <Button size="sm" className="gap-1.5" disabled={saving} onClick={() => update("scheduled")}>
+              <Button className="gap-1.5 px-4 py-2 text-xs" disabled={saving} onClick={() => update("scheduled")}>
                 <Calendar className="h-3.5 w-3.5" />
                 {saving ? "Saving…" : "Schedule call"}
               </Button>
             )}
             {(session.status === "pending" || session.status === "scheduled") && (
-              <Button size="sm" variant="outline" className="gap-1.5" disabled={saving} onClick={() => update("completed")}>
+              <Button variant="outline" className="gap-1.5 px-4 py-2 text-xs" disabled={saving} onClick={() => update("completed")}>
                 <CheckCircle2 className="h-3.5 w-3.5 text-teal" />
                 {saving ? "Saving…" : "Mark completed"}
               </Button>
             )}
             {session.status !== "closed" && session.status !== "completed" && (
-              <Button size="sm" variant="ghost" className="gap-1.5 text-muted" disabled={saving} onClick={() => update("closed")}>
+              <button
+                className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-4 py-2 text-xs font-semibold text-muted transition hover:border-coral/40 hover:text-coral disabled:opacity-50"
+                disabled={saving}
+                onClick={() => update("closed")}
+              >
                 <X className="h-3.5 w-3.5" />
                 Close
-              </Button>
+              </button>
             )}
             {(session.status === "scheduled" || session.status === "completed") && (
-              <Button size="sm" variant="outline" className="gap-1.5" disabled={saving} onClick={() => update(session.status)}>
+              <Button variant="outline" className="gap-1.5 px-4 py-2 text-xs" disabled={saving} onClick={() => update(session.status)}>
                 Save notes
               </Button>
             )}
