@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 type Tab = "signin" | "signup";
-type Role = "learner" | "translator" | "ngo";
+type Role = "learner" | "mentor" | "ngo";
 
 const ROLE_CONFIG: {
   value: Role;
@@ -34,11 +34,11 @@ const ROLE_CONFIG: {
     color: "teal",
   },
   {
-    value: "translator",
-    label: "Translator",
-    tagline: "I want to translate lectures and earn",
+    value: "mentor",
+    label: "Mentor",
+    tagline: "I want to guide learners and review content",
     icon: Languages,
-    features: ["Review lecture transcripts", "Earn per verified transcript", "Skills passport", "Chatbot access"],
+    features: ["Review lecture transcripts", "Earn per verified transcript", "Skills passport", "Gap Finder & chatbot access"],
     color: "gold",
   },
   {
@@ -53,19 +53,19 @@ const ROLE_CONFIG: {
 
 const DEMO_ACCOUNTS: { role: string; email: string; pw: string; roleValue: Role }[] = [
   { role: "Learner", email: "ananya@demo.com", pw: "demo123", roleValue: "learner" },
-  { role: "Translator", email: "sravani@demo.com", pw: "demo123", roleValue: "translator" },
+  { role: "Mentor", email: "sravani@demo.com", pw: "demo123", roleValue: "mentor" },
   { role: "NGO", email: "rahul@demo.com", pw: "demo123", roleValue: "ngo" },
 ];
 
 const ROLE_ICON_COLOR: Record<Role, string> = {
   learner: "bg-tint text-teal",
-  translator: "bg-tint-warm text-gold",
+  mentor: "bg-tint-warm text-gold",
   ngo: "bg-[#fff0ec] text-coral",
 };
 
 const ROLE_BORDER: Record<Role, string> = {
   learner: "border-teal bg-tint",
-  translator: "border-gold bg-tint-warm",
+  mentor: "border-gold bg-tint-warm",
   ngo: "border-coral bg-[#fff0ec]",
 };
 

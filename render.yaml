@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: rooted-hackathon
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    nodeVersion: 20.11.0
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      # Anthropic (optional – enables AI question generation and gap analysis)
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: ANTHROPIC_MODEL
+        value: claude-haiku-4-5-20251001
+      # HuggingFace (optional – free fallback for AI features)
+      - key: HF_TOKEN
+        sync: false
+      # Embeddings – keep "local" on free tier (no external call needed)
+      - key: EMBEDDINGS_PROVIDER
+        value: local
+    healthCheckPath: /
+    autoDeploy: true

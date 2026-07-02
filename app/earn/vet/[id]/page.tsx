@@ -37,7 +37,7 @@ export default async function VetTranscriptPage({
       <VettingPanel
         lectureId={bundle.lecture.id}
         role={user.role}
-        canVet={user.role === "translator" || user.role === "ngo"}
+        canVet={user.role === "mentor" || user.role === "ngo"}
         status={bundle.transcript.status}
         authorId={bundle.transcript.authorId}
       />

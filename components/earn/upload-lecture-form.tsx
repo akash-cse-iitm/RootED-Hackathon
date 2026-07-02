@@ -57,7 +57,7 @@ export function UploadLectureForm({ onSuccess }: { onSuccess?: () => void }) {
         <p className="font-heading text-xl text-ink">Lecture submitted!</p>
         <p className="text-sm leading-6 text-muted">
           A draft transcript has been created in the target language.
-          Translators can now open it from the review queue.
+          Mentors can now open it from the review queue.
         </p>
         <Button
           variant="outline"
@@ -126,7 +126,7 @@ export function UploadLectureForm({ onSuccess }: { onSuccess?: () => void }) {
           ))}
         </select>
         <p className="text-xs text-muted">
-          Translators reviewing this lecture will work in this language.
+          Mentors reviewing this lecture will work in this language.
         </p>
       </div>
 

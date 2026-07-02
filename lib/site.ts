@@ -1,4 +1,4 @@
-export type AppRole = "learner" | "translator" | "ngo";
+export type AppRole = "learner" | "mentor" | "ngo";
 
 export const SESSION_COOKIE = "rooted-demo-user";
 
@@ -62,7 +62,7 @@ export const modules = [
 // Which modules each role can access
 export const ROLE_MODULES: Record<AppRole, string[]> = {
   learner: ["gap-finder", "chat", "reels", "counseling"],
-  translator: ["earn", "chat", "counseling"],
+  mentor: ["earn", "chat", "counseling", "gap-finder"],
   ngo: ["grievances", "counseling", "earn", "chat", "gap-finder", "reels"]
 };
 

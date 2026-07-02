@@ -45,7 +45,7 @@ export function TranscriptEditor({
       <div className="rounded-2xl bg-tint-warm p-4 text-sm leading-6 text-text">
         {canEdit
           ? "Edit each translated segment, then submit for second review."
-          : `You are signed in as ${role}. Only the translator role can submit transcript edits.`}
+          : `You are signed in as ${role}. Only the mentor role can submit transcript edits.`}
         <div className="mt-2 font-medium text-teal-dark">Current status: {status}</div>
       </div>
       {segments.map((segment, index) => (

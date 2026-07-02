@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { SESSION_COOKIE } from "@/lib/site";
 import { validateCredentials } from "@/lib/users/store";
+import { upsertProfile } from "@/lib/profiles/store";
 
 const schema = z.object({
   email: z.string().email(),
@@ -34,6 +35,15 @@ export async function POST(request: Request) {
     path: "/",
     maxAge: 60 * 60 * 24 * 7
   });
+
+  // Track last-seen for dropout risk calculation (fire-and-forget)
+  if (user.role === "learner") {
+    upsertProfile(user.id, {
+      userName: user.name,
+      email: user.email,
+      lastSeenAt: new Date().toISOString(),
+    }).catch(() => {/* non-critical */});
+  }
 
   return NextResponse.json({ ok: true, role: user.role, name: user.name });
 }

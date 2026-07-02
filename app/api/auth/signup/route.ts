@@ -4,12 +4,13 @@ import { z } from "zod";
 
 import { SESSION_COOKIE } from "@/lib/site";
 import { createUser } from "@/lib/users/store";
+import { upsertProfile } from "@/lib/profiles/store";
 
 const schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email."),
   password: z.string().min(6, "Password must be at least 6 characters."),
-  role: z.enum(["learner", "translator", "ngo"])
+  role: z.enum(["learner", "mentor", "ngo"])
 });
 
 export async function POST(request: Request) {
@@ -34,6 +35,15 @@ export async function POST(request: Request) {
     path: "/",
     maxAge: 60 * 60 * 24 * 7
   });
+
+  // Seed a profile entry so the learner appears in the NGO roster from day 1
+  if (result.role === "learner") {
+    upsertProfile(result.id, {
+      userName: result.name,
+      email: result.email,
+      lastSeenAt: new Date().toISOString(),
+    }).catch(() => {/* non-critical */});
+  }
 
   return NextResponse.json({ ok: true, role: result.role, name: result.name });
 }

@@ -39,7 +39,7 @@ export default async function ReviewTranscriptPage({
         lectureId={bundle.lecture.id}
         role={user.role}
         initialSegments={bundle.transcript.segments}
-        canEdit={user.role === "translator"}
+        canEdit={user.role === "mentor"}
         status={bundle.transcript.status}
       />
     </Shell>

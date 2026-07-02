@@ -28,7 +28,7 @@ export default async function EarnPage() {
             </h1>
             <p className="mt-3 text-sm leading-7 text-muted">
               Upload popular lectures and get a native-language transcript ready for vetting.
-              Translators earn a verified skill badge and ₹15 per approved transcript.
+              Mentors earn a verified skill badge and ₹15 per approved transcript.
             </p>
           </div>
           <Link

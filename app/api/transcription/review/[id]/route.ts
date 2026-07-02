@@ -20,8 +20,8 @@ export async function POST(
 ) {
   const user = await getCurrentUser();
 
-  if (!user || user.role !== "translator") {
-    return NextResponse.json({ error: "Translator role required." }, { status: 403 });
+  if (!user || user.role !== "mentor") {
+    return NextResponse.json({ error: "Mentor role required." }, { status: 403 });
   }
 
   const body = await request.json().catch(() => null);

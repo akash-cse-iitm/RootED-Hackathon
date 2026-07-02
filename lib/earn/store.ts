@@ -2,6 +2,9 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 
 import { getTranscriptionProvider } from "@/lib/transcription/provider";
+import type { VocationalSkill } from "@/lib/earn/constants";
+export { VOCATIONAL_CATEGORIES } from "@/lib/earn/constants";
+export type { VocationalSkill, VocationalCategory } from "@/lib/earn/constants";
 
 export type StoredTranscript = {
   lectureId: string;
@@ -39,11 +42,13 @@ export type PayoutLedger = {
   createdAt: string;
 };
 
+
 type EarnState = {
   transcripts: StoredTranscript[];
   uploadedLectures: UploadedLecture[];
   skillRecords: SkillRecord[];
   payouts: PayoutLedger[];
+  vocationalSkills: VocationalSkill[];
 };
 
 const DATA_DIR = path.join(process.cwd(), "data");
@@ -67,7 +72,8 @@ async function ensureState() {
       })),
       uploadedLectures: [],
       skillRecords: [],
-      payouts: []
+      payouts: [],
+      vocationalSkills: [],
     };
 
     await fs.writeFile(EARN_FILE, `${JSON.stringify(state, null, 2)}\n`, "utf8");
@@ -238,5 +244,46 @@ export async function addUploadedLecture(
 export async function listUploadedLectures(): Promise<UploadedLecture[]> {
   const state = await readState();
   return state.uploadedLectures ?? [];
+}
+
+export async function addVocationalSkill(
+  input: Omit<VocationalSkill, "id" | "status" | "createdAt">
+): Promise<VocationalSkill> {
+  return withMutation(async () => {
+    const state = await readState();
+    if (!state.vocationalSkills) state.vocationalSkills = [];
+    const entry: VocationalSkill = {
+      ...input,
+      id: `vskill-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      status: "self-reported",
+      createdAt: new Date().toISOString(),
+    };
+    state.vocationalSkills.push(entry);
+    await writeState(state);
+    return entry;
+  });
+}
+
+export async function listVocationalSkills(userId?: string): Promise<VocationalSkill[]> {
+  const state = await readState();
+  const all = state.vocationalSkills ?? [];
+  return userId ? all.filter((s) => s.userId === userId) : all;
+}
+
+export async function verifyVocationalSkill(
+  skillId: string,
+  mentorId: string
+): Promise<VocationalSkill | null> {
+  return withMutation(async () => {
+    const state = await readState();
+    if (!state.vocationalSkills) state.vocationalSkills = [];
+    const skill = state.vocationalSkills.find((s) => s.id === skillId);
+    if (!skill) return null;
+    skill.status = "mentor-verified";
+    skill.verifiedBy = mentorId;
+    skill.verifiedAt = new Date().toISOString();
+    await writeState(state);
+    return skill;
+  });
 }
 

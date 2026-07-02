@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-export type AppRole = "learner" | "translator" | "ngo";
+export type AppRole = "learner" | "mentor" | "ngo";
 
 export type StoredUser = {
   id: string;
@@ -48,10 +48,10 @@ const DEMO_SEED: Omit<StoredUser, "passwordHash">[] = [
     locale: "en"
   },
   {
-    id: "translator-demo",
+    id: "mentor-demo",
     name: "Sravani Telugu",
     email: "sravani@demo.com",
-    role: "translator",
+    role: "mentor",
     locale: "te"
   },
   {
@@ -89,6 +89,11 @@ async function ensureState(): Promise<UserState> {
 async function writeState(state: UserState): Promise<void> {
   await fs.writeFile(USERS_FILE, `${JSON.stringify(state, null, 2)}\n`, "utf8");
   stateCache = state;
+}
+
+export async function listUsers(): Promise<StoredUser[]> {
+  const state = await ensureState();
+  return state.users;
 }
 
 export async function findUserById(id: string): Promise<StoredUser | null> {

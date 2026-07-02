@@ -46,7 +46,7 @@ export function VettingPanel({
       <div className="mt-4 rounded-2xl bg-tint-warm p-4 text-sm leading-6 text-text">
         {canVet
           ? "Approving this draft publishes it, creates a mocked payout entry, and adds a verified skill to the author's passport."
-          : `You are signed in as ${role}. Only a translator acting as second reviewer or the NGO role can approve.`}
+          : `You are signed in as ${role}. Only a mentor acting as second reviewer or the NGO role can approve.`}
       </div>
       {done ? (
         <div className="mt-4 rounded-2xl bg-tint p-4 text-sm font-medium text-teal-dark">

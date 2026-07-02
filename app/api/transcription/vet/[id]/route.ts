@@ -9,9 +9,9 @@ export async function POST(
 ) {
   const user = await getCurrentUser();
 
-  if (!user || (user.role !== "translator" && user.role !== "ngo")) {
+  if (!user || (user.role !== "mentor" && user.role !== "ngo")) {
     return NextResponse.json(
-      { error: "Translator or NGO role required." },
+      { error: "Mentor or NGO role required." },
       { status: 403 }
     );
   }

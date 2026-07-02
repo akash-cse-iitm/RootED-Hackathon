@@ -38,7 +38,7 @@ export function LectureList({
                 href={`/earn/review/${lecture.id}`}
                 className="rounded-full border border-line px-4 py-2 text-sm font-semibold text-ink"
               >
-                {role === "translator" ? "Review draft" : "View draft"}
+                {role === "mentor" ? "Review draft" : "View draft"}
               </Link>
               <Link
                 href={`/earn/vet/${lecture.id}`}
